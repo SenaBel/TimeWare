@@ -1,5 +1,13 @@
+:root {
+  --cor-terciaria: rgb(176, 22, 22);
+  --cor-amarelo: rgb(220, 204, 26);
+  --cor-preta: #000;
+  --cor-branca: #FFF;
+}
+
 body {
   margin: 0;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -10,4 +18,118 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+.full-width { width: 100%;}
+.full-height { height: 100vh; }
+
+/* FLEX */
+.flex { display: flex; }
+.horizontal { flex-direction: row; }
+.vertical { flex-direction: column; }
+
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+.flex-3 { flex: 3; }
+.flex-4 { flex: 4; }
+.flex-5 { flex: 5; }
+.flex-6 { flex: 6; }
+.flex-7 { flex: 7; }
+.flex-8 { flex: 8; }
+
+.flex-start,
+.flex-end,
+.flex-center {
+  align-items: center;
+}
+.flex-start { justify-content: flex-start; }
+.flex-end { justify-content: flex-end; }
+.flex-center { justify-content: center; }
+
+
+.Input-Simples label {
+  margin: 5px 0 2px 0;
+  font-weight: bold;
+  text-align: left;
+}
+.Input-Simples input, textarea {
+  outline: 0;
+  padding: 8px 12px;
+  margin: 22px 0;
+  margin-bottom: 43px;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  border: 2px solid #7fd3d6;
+  margin-bottom: 30px;
+  
+}
+.Input-Simples input:focus{
+  border: 2px solid rgb(142, 233, 245);
+}
+
+.input-error {
+  border: 1px solid red;
+  box-shadow: 0 0 9px #a31d1d;
+}
+.small-danger {
+  color: #a31d1d;
+  font-size: 12px;
+  margin-left: 16px;
+  text-align: left;
+  margin-top: 1px;
+  margin-bottom: 35px;
+}
+
+.Card, .Sub-Card {
+  margin: 40px 20px;
+  padding: 30px;
+  border-radius: 10px;
+  border: 0;
+  box-shadow: inset 0 0 0.4em #3e969d;
+  background-color: var(--cor-branca);
+}
+
+.Info .Card {
+  width: 95%;
+  max-width: 700px;
+}
+.Info h1 {
+  font-size: 3rem;
+  color: rgb(20, 3, 61);
+  margin-bottom: 0;
+}
+.Info a {
+  text-decoration: none;
+  color: #474747;
+}
+
+.button {
+  font-size: 1rem;
+  padding: 10px 15px;
+  margin: 5px;
+  border: 1px solid #aaaa;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bold;
+}
+.button-small {
+  font-size: 0.8rem;
+  padding: 5px 8px;
+  margin: 3px;
+
+}
+
+.button-success {
+  background-color: #40E0D0;
+  color: var(--cor-branca);
+  border: 0;
+}
+.button-danger {
+  background-color: var(--cor-terciaria);
+  color: var(--cor-branca);
+  border: 0;
+}
+.button-warning {
+  background-color: var(--cor-amarelo);
+  color: var(--cor-preta);
+  border: 0;
 }

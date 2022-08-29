@@ -1,11 +1,10 @@
 
 import './App.css';
+import Time from './app/containers/Timer';
 
 function App() {
   return (
-    <div className="App">
-     <h1> Sistema TimeWare</h1>
-    </div>
+    <Time />
   );
 }
 
