@@ -6,14 +6,16 @@ import ButtonSimples from '../../components/ButtonSimples';
 
 const Time = () => {
     const [valueInitial, setValueInitial] = useState(0)
+    const [timeOutIdGiven, setTimeOutIdGiven] = useState(0)
     const [totalTimeInSeconds, setTotalTimeInSeconds] = useState(valueInitial * 60)
     const [error, setError] = useState('')
 
     const minutes = Math.floor(totalTimeInSeconds / 60)
     const seconds = totalTimeInSeconds % 60
 
-    const onChangeTime = () => {
- 
+    const startTime = () => {
+        //setValueInitial(valueInitial.trim()); 
+
         if(valueInitial == 0){
             setError("Preencha um Valor Diferente de 0!")
         }
@@ -27,7 +29,8 @@ const Time = () => {
     }
 
     const stop = () => {
-        clearInterval(totalTimeInSeconds)
+       clearTimeout(timeOutIdGiven)
+       setTotalTimeInSeconds(0);
         console.log('é aqui: ',totalTimeInSeconds)
         console.log("Parou")
     }
@@ -42,12 +45,13 @@ const Time = () => {
         }
         
         if(totalTimeInSeconds !== 0){
-            setTimeout(() => {
+
+           const id = setTimeout(() => {
             if(totalTimeInSeconds !== 0){
                 setTotalTimeInSeconds(totalTimeInSeconds - 1)
             }
             }, 1000)
-                    
+            setTimeOutIdGiven(id)
         }
         
     }, [totalTimeInSeconds])
@@ -70,20 +74,17 @@ const Time = () => {
         <InputTime
           label="Define o Time: "
           type="text"
-          value={valueInitial}
+          //value={valueInitial}
           onChange={(e) => setValueInitial(e.target.value)}
           error={error}
         />
         
         <div className="flex flex-center ">
-        <ButtonSimples onClick={onChangeTime} type="success" label="Iniciar o Time"/>
+        <ButtonSimples onClick={startTime} type="success" label="Iniciar o Time"/>
         <ButtonSimples onClick={stop} type="danger" label="Encerrar o Time"/>
         <ButtonSimples type="warning" label="Histórico dos Time"/>
-
         </div>
-
       </div>
-
     </div>
     )
 }
