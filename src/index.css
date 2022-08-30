@@ -3,6 +3,7 @@
   --cor-amarelo: rgb(220, 204, 26);
   --cor-preta: #000;
   --cor-branca: #FFF;
+  --cor-tema: rgb(7, 7, 114);
 }
 
 body {
@@ -133,3 +134,30 @@ code {
   color: var(--cor-preta);
   border: 0;
 }
+
+table.simples {
+  margin-bottom: 80px;
+  margin-top: 35px;
+  border-collapse: collapse;
+}
+table.simples td {
+  text-align: center;
+  padding: 10px;
+  font-size: 0.9rem;
+   border-bottom: 1px solid #999;
+}
+table.simples th {
+  background-color: var(--cor-tema);
+  padding: 10px;
+  color: var(--cor-branca);
+  font-size: 1rem; 
+}
+ table.simples th:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+table.simples th:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+} 
+
