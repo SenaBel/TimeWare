@@ -9,26 +9,26 @@ const Time = () => {
     const [totalTimeInSeconds, setTotalTimeInSeconds] = useState(valueInitial * 60)
     const [error, setError] = useState('')
 
-    
     const minutes = Math.floor(totalTimeInSeconds / 60)
     const seconds = totalTimeInSeconds % 60
 
     const onChangeTime = () => {
+ 
         if(valueInitial == 0){
             setError("Preencha um Valor Diferente de 0!")
         }
         if(valueInitial == ""){
             setError('Valor não Pode ser Vazio!')
         }
-       if(valueInitial != 0){
-        setTotalTimeInSeconds(valueInitial)
+        if(valueInitial != 0){
+            setTotalTimeInSeconds(valueInitial)
        }
        console.log("Valor do Initial", valueInitial)
     }
 
     const stop = () => {
-        clearInterval(minutes)
-        clearInterval(seconds)
+        clearInterval(totalTimeInSeconds)
+        console.log('é aqui: ',totalTimeInSeconds)
         console.log("Parou")
     }
 
