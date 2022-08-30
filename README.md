@@ -7,7 +7,7 @@ Esse é o projeto **TimeWare**, criado por **Abel Sena** como teste pratico para
  **Ponto Forte do Projeto TimeWare** foi o uso do **JavaScript** usando a biblioteca (**ReactJS**). Esse teste foi otimo para relembrar e praticar alguns conceitos de **JavaScript**. 
 
 ### :computer: Front-End
-- Adicionado um modal com a imagem inicial do projeto
+- Adicionado imagem inicial do projeto
 
 <div align="center">
     <img src="images/preview/imagemInicial.png" alt="local criado" />
