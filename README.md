@@ -10,7 +10,7 @@ Esse é o projeto **TimeWare**, criado por **Abel Sena** como teste pratico para
 - Adicionado imagem inicial do projeto
 
 <div align="center">
-    <img src="images/preview/imagemInicial.png" alt="local criado" />
+    <img src="/images/preview/imagemInicial.png" alt="local criado" />
 </div>
 
 - Esse projeto tem um campo onde o usuário define um tempo para execução de uma tarefa diária.
