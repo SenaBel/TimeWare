@@ -3,18 +3,16 @@ import React, {useState, useEffect, useCallback} from 'react'
 import InputTime from '../../components/InputTime';
 import Title from '../../components/Title';
 import ButtonSimples from '../../components/ButtonSimples';
-import TabelaSimples from '../../components/Tabela'
-
-
-
-//let getInitalLocalStorage = JSON.parse(localStorage.getItem('TimeStopped')) || []
 
 const Time = () => {
+
     const [valueInitial, setValueInitial] = useState(0)
     const [timeOutIdGiven, setTimeOutIdGiven] = useState(0)
     const [totalTimeInSeconds, setTotalTimeInSeconds] = useState(valueInitial * 60)
-    const [listTime, setListTime] = useState([])
-    const [getValue, setGetValue] = useState([])
+
+    const [list, setList] = useState([])
+    const [canShow, setCanShow] = useState(false);
+
     const [error, setError] = useState('')
 
     const [initialRender, setInitialRender] = useState(true)
@@ -23,108 +21,76 @@ const Time = () => {
     const seconds = totalTimeInSeconds % 60
 
     const startTime = () => {
-        if(valueInitial == 0){
-            setError("Preencha um Valor Diferente de 0!")
-        }
-        if(valueInitial == ""){
-            setError('Valor não Pode ser Vazio!')
-        }
-        if(valueInitial != 0){
-            setTotalTimeInSeconds(valueInitial)
-       }
+        setTotalTimeInSeconds(valueInitial)
     }
-
   
     const stop = () => {
-       clearTimeout(timeOutIdGiven)
-       setTotalTimeInSeconds(0);
+        clearTimeout(timeOutIdGiven)
+        setTotalTimeInSeconds(0);
 
-       let timeStop = Math.floor(totalTimeInSeconds / 60) + ":" + totalTimeInSeconds % 60
+        let timeStop = Math.floor(totalTimeInSeconds / 60) + ":" + totalTimeInSeconds % 60
 
-       if(timeStop.toString() != '0:0'){
-        let value = timeStop.toString()
+        if(timeStop.toString() != '0:0'){
+           let value = timeStop.toString()
         
-        setListTime((prev) => {
-            console.log('valor do PREV', prev)
-            console.log('Value : ', value)
+        setList((prev) => {
             let list = []
             list = [...prev, value]
             list = [...new Set(list)]
+            localStorage.setItem("TimeStopped", JSON.stringify(list))
             return list
-        })
+            })
        }
        setValueInitial(0)
     }
   
-    const saveListTime = useCallback((list) => {
-        if(list.length > 0){
-            localStorage.setItem("TimeStopped", JSON.stringify(list))
-        }
-    },[])
-
-
     const fethList = useCallback(() => {
         let data = null 
         data = JSON.parse(localStorage.getItem('TimeStopped')) || []
+
         if(initialRender && data.length > 0){
-            
-            setGetValue([...data])
+            setList([...data])
+            setCanShow(true);
         }
         setInitialRender(false)
         
-            console.log("valor de DATA", data);
-            
-        
-    },[initialRender])
+    }, [initialRender])
 
 
     useEffect(() => {
-       fethList()
+        fethList()
     }, [ fethList])
 
 
-    useEffect(() => {
-        saveListTime(listTime)
-    }, [saveListTime, listTime ])
-
-
-
-    const historyTime = () => {
-        setGetValue([ ...listTime])
-
-        //let getTimeStopped = localStorage.getItem("TimeStopped")
-       // let getTimeStoppedObj = JSON.parse(getTimeStopped)
-    //     console.log('Valor do ObjGetTime', getTimeStoppedObj)
-
-    //     //if(!getTimeStoppedObj){
-    //    //     return
-    //    // }
-
-    //     if(getTimeStoppedObj != '0:0'){
-    //         let value = [...getTimeStoppedObj]
-    //         //value.push([...getTimeStoppedObj])
-    //         console.log('asdasdf', getTimeStoppedObj)
-
-            // setGetValue((prev) => {
-            //     let list = []
-            //     list = [...prev, ...listTime]
-            //     list = [...new Set(list)]
-            //     return list
-            // });
-
-            //setGetValue((prev) => [...prev, ...value])
-    //     }
-        // console.log('foi', getTimeStoppedObj)
-        // console.log('sdfs', getValue)
+    const handleChange = (value) => {
+        if (value == 0) {
+            setError("Preencha um Valor Diferente de 0!")
+        } else if (value == "") {
+            setError('Valor não Pode ser Vazio!')
+        } else {
+            setValueInitial(value)
+        }
     }
 
-    const handleRemoveTime= (index) =>{
-        //const index = getInitalLocalStorage.indexOf()
+    const historyTime = () => {
+        setCanShow(!canShow)
+    }
 
-        // getInitalLocalStorage.splice(index, 1)
-        // console.log('Esse é o valor do index', index)
-        // console.log('GetInitialstorage', getInitalLocalStorage)
+    const handleRemoveTime= (list, item, i) =>{
+        const index = list.indexOf(item)
+        if (index > -1 && index === i) {
+            list.splice(index, 1)
+        }
+        localStorage.setItem("TimeStopped", JSON.stringify(list))
+        setList([...list])
+  
 
+    }
+
+    const resetHistory = () => {
+        localStorage.setItem("TimeStopped", JSON.stringify([]))
+        setCanShow(false)
+        setList([])
     }
 
     useEffect(() => {
@@ -150,56 +116,57 @@ const Time = () => {
 
     return (
         <div className="Info flex flex-center">
-      <div className="Card">
-        <div className="flex vertical flex-center">
-          <Title tipo="h1" title="Sistema TimeWare"/><br/>
-            <div className="Sub-Card">
-                <span>{minutes.toString().padStart(2, "0")}</span>
-                <span>:</span>
-                <span>{seconds.toString().padStart(2, "0")}</span>
-            </div><br/>
+            <div className="Card">
+                <div className="flex vertical flex-center">
+                    <Title tipo="h1" className="title-default" title="TimeWare" />
+                    <div className="Sub-Card timer-card">
+                        <span>{minutes.toString().padStart(2, "0")}</span>
+                        <span>:</span>
+                        <span>{seconds.toString().padStart(2, "0")}</span>
+                    </div><br />
 
-         
-        </div> <br/><br/>
+                </div> <br /><br />
 
-        <InputTime
-          label="Define o Time: "
-          type="number"
-          value={valueInitial}
-          onChange={(e) => setValueInitial(e.target.value)}
-          error={error}
-        />
-        
-        <div className="flex flex-center ">
-        <ButtonSimples onClick={startTime} type="success" label="Iniciar o Time"/>
-        <ButtonSimples onClick={stop} type="danger" label="Encerrar o Time"/>
-        <ButtonSimples onClick={historyTime} type="warning" label="Histórico dos Time"/>
+                <InputTime
+                    label="Tempo: "
+                    name="timer"
+                    type="number"
+                    value={valueInitial}
+                    onChange={(e) => handleChange(e.target.value)}
+                    error={error}
+                />
+
+                <div className="flex flex-center ">
+                    <ButtonSimples onClick={startTime} type="success" label="Iniciar" />
+                    <ButtonSimples onClick={stop} type="secondary" label="Parar" />
+                    <ButtonSimples onClick={historyTime} type="warning" label="Histórico" />
+                    <ButtonSimples onClick={resetHistory} type="danger" label="Limpar" />
+                </div>
+                <div className="TabelaSimples flex flex-center main-table-text">
+                    <table className="simples ">
+                        <thead>
+                            <tr>
+                                <th>Id do Time</th>
+                                <th>Tempo Encerrado</th>
+                                <th>Remover Tempo Encerrado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {canShow && list.map((time, index) => (
+                                <tr key={index}>
+                                    <td>{index}</td>
+                                    <td>{time}</td>
+                                    <td><ButtonSimples onClick={() => handleRemoveTime(list, time, index)} type="danger" label="x" /></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
         </div>
-        <div className="TabelaSimples flex flex-center">
-        <table className="simples ">
-            <thead>
-                <tr>
-                <th>Id do Time</th>
-                <th>Tempo Encerrado</th>
-                <th>Remover Tempo Encerrado</th>
-                </tr>
-            </thead>
-           
-            <tbody>
-                {getValue.map((time, index) => (
-                <tr key={index}>
-                <td>{index}</td>
-                <td>{time}</td>
-                <td><ButtonSimples onClick={()=> handleRemoveTime(index)} type="danger" label="x"/></td>
-                </tr>
-                ))}
-            </tbody>
-            </table>
-            
-        </div>
-
-      </div>
-    </div>
     )
 }
 export default Time;
