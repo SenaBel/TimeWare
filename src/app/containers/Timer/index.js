@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 
 import InputTime from '../../components/InputTime';
 import Title from '../../components/Title';
@@ -7,21 +7,22 @@ import TabelaSimples from '../../components/Tabela'
 
 
 
-let getInitalLocalStorage = JSON.parse(localStorage.getItem('TimeStopped')) || []
+//let getInitalLocalStorage = JSON.parse(localStorage.getItem('TimeStopped')) || []
 
 const Time = () => {
     const [valueInitial, setValueInitial] = useState(0)
     const [timeOutIdGiven, setTimeOutIdGiven] = useState(0)
     const [totalTimeInSeconds, setTotalTimeInSeconds] = useState(valueInitial * 60)
-    const [stopValue, setStopValue] = useState(valueInitial)
-    const [getValue, setGetValue] = useState(getInitalLocalStorage)
+    const [listTime, setListTime] = useState([])
+    const [getValue, setGetValue] = useState([])
     const [error, setError] = useState('')
+
+    const [initialRender, setInitialRender] = useState(true)
 
     const minutes = Math.floor(totalTimeInSeconds / 60)
     const seconds = totalTimeInSeconds % 60
 
     const startTime = () => {
-
         if(valueInitial == 0){
             setError("Preencha um Valor Diferente de 0!")
         }
@@ -31,45 +32,98 @@ const Time = () => {
         if(valueInitial != 0){
             setTotalTimeInSeconds(valueInitial)
        }
-       console.log("Valor do Initial", valueInitial)
     }
 
   
     const stop = () => {
        clearTimeout(timeOutIdGiven)
        setTotalTimeInSeconds(0);
+
        let timeStop = Math.floor(totalTimeInSeconds / 60) + ":" + totalTimeInSeconds % 60
-       //setStopValue(timeStop)
-       console.log('sss', timeStop)
 
-       //let valueForSaveLocalStorage = timeStop
-        getInitalLocalStorage.push(timeStop)
-        localStorage.setItem("TimeStopped", JSON.stringify(getInitalLocalStorage))
-
-       console.log("localstorage: ", Math.floor(totalTimeInSeconds / 60) + ":" + totalTimeInSeconds % 60)
-
+       if(timeStop.toString() != '0:0'){
+        let value = timeStop.toString()
+        
+        setListTime((prev) => {
+            console.log('valor do PREV', prev)
+            console.log('Value : ', value)
+            let list = []
+            list = [...prev, value]
+            list = [...new Set(list)]
+            return list
+        })
+       }
+       setValueInitial(0)
     }
-
-    const storicTime = () => {
-        let getTimeStopped = localStorage.getItem("TimeStopped")
-        let getTimeStoppedObj = JSON.parse(getTimeStopped)
-
-        if(!getTimeStoppedObj){
-            return
+  
+    const saveListTime = useCallback((list) => {
+        if(list.length > 0){
+            localStorage.setItem("TimeStopped", JSON.stringify(list))
         }
-        if(getTimeStoppedObj){
-            setGetValue(getTimeStoppedObj)
+    },[])
+
+
+    const fethList = useCallback(() => {
+        let data = null 
+        data = JSON.parse(localStorage.getItem('TimeStopped')) || []
+        if(initialRender && data.length > 0){
+            
+            setGetValue([...data])
         }
-        console.log('foi', getTimeStoppedObj)
-        console.log('sdfs', getValue)
+        setInitialRender(false)
+        
+            console.log("valor de DATA", data);
+            
+        
+    },[initialRender])
+
+
+    useEffect(() => {
+       fethList()
+    }, [ fethList])
+
+
+    useEffect(() => {
+        saveListTime(listTime)
+    }, [saveListTime, listTime ])
+
+
+
+    const historyTime = () => {
+        setGetValue([ ...listTime])
+
+        //let getTimeStopped = localStorage.getItem("TimeStopped")
+       // let getTimeStoppedObj = JSON.parse(getTimeStopped)
+    //     console.log('Valor do ObjGetTime', getTimeStoppedObj)
+
+    //     //if(!getTimeStoppedObj){
+    //    //     return
+    //    // }
+
+    //     if(getTimeStoppedObj != '0:0'){
+    //         let value = [...getTimeStoppedObj]
+    //         //value.push([...getTimeStoppedObj])
+    //         console.log('asdasdf', getTimeStoppedObj)
+
+            // setGetValue((prev) => {
+            //     let list = []
+            //     list = [...prev, ...listTime]
+            //     list = [...new Set(list)]
+            //     return list
+            // });
+
+            //setGetValue((prev) => [...prev, ...value])
+    //     }
+        // console.log('foi', getTimeStoppedObj)
+        // console.log('sdfs', getValue)
     }
 
     const handleRemoveTime= (index) =>{
         //const index = getInitalLocalStorage.indexOf()
 
-        getInitalLocalStorage.splice(index, 1)
-        console.log('Esse é o valor do index', index)
-        console.log('GetInitialstorage', getInitalLocalStorage)
+        // getInitalLocalStorage.splice(index, 1)
+        // console.log('Esse é o valor do index', index)
+        // console.log('GetInitialstorage', getInitalLocalStorage)
 
     }
 
@@ -110,8 +164,8 @@ const Time = () => {
 
         <InputTime
           label="Define o Time: "
-          type="text"
-          //value={valueInitial}
+          type="number"
+          value={valueInitial}
           onChange={(e) => setValueInitial(e.target.value)}
           error={error}
         />
@@ -119,7 +173,7 @@ const Time = () => {
         <div className="flex flex-center ">
         <ButtonSimples onClick={startTime} type="success" label="Iniciar o Time"/>
         <ButtonSimples onClick={stop} type="danger" label="Encerrar o Time"/>
-        <ButtonSimples onClick={storicTime} type="warning" label="Histórico dos Time"/>
+        <ButtonSimples onClick={historyTime} type="warning" label="Histórico dos Time"/>
         </div>
         <div className="TabelaSimples flex flex-center">
         <table className="simples ">
@@ -127,7 +181,7 @@ const Time = () => {
                 <tr>
                 <th>Id do Time</th>
                 <th>Tempo Encerrado</th>
-                {/* <th>Remover Tempo Encerrado</th> */}
+                <th>Remover Tempo Encerrado</th>
                 </tr>
             </thead>
            
@@ -136,7 +190,7 @@ const Time = () => {
                 <tr key={index}>
                 <td>{index}</td>
                 <td>{time}</td>
-                {/* <td><ButtonSimples onClick={()=> handleRemoveTime(index)} type="danger" label="x"/></td> */}
+                <td><ButtonSimples onClick={()=> handleRemoveTime(index)} type="danger" label="x"/></td>
                 </tr>
                 ))}
             </tbody>
